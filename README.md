@@ -232,6 +232,11 @@ pytest tests/
 * Large log files may increase processing time.
 
 ---
+##Team Members
+-Kattamuri Alekhya
+-Velaga Mounika
+-Udi Vishnu Vardhini
+-Ganisetti Venuka
 
 ## Project Links
 
