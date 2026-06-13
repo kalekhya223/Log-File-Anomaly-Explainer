@@ -1,0 +1,8 @@
+line_number,level,message
+1,INFO,Server boot completed
+2,WARNING,Multiple failed login attempts detected
+3,WARNING,Multiple failed login attempts detected
+4,ERROR,Authentication service unavailable
+5,CRITICAL,Possible brute force attack detected
+6,INFO,Security team notified
+7,INFO,Incident logged successfully
