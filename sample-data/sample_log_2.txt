@@ -1,0 +1,7 @@
+2025-06-02 08:00:01 INFO Server boot completed
+2025-06-02 08:05:15 WARNING Multiple failed login attempts detected
+2025-06-02 08:06:40 WARNING Multiple failed login attempts detected
+2025-06-02 08:08:55 ERROR Authentication service unavailable
+2025-06-02 08:10:20 CRITICAL Possible brute force attack detected
+2025-06-02 08:12:01 INFO Security team notified
+2025-06-02 08:15:33 INFO Incident logged successfully
