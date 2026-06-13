@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log File Anomaly Explainer - AI Diagnostics</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts (Outfit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+                <div class="brand-logo-icon">
+                    <i class="bi bi-shield-fill-exclamation text-primary-glow"></i>
+                </div>
+                <span class="fw-bold tracking-tight">LogSentry AI</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('upload') }}">Upload Analyzer</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="themeToggle" class="btn btn-outline-light rounded-pill px-3 py-1-5 d-flex align-items-center gap-2">
+                            <i id="themeToggleIcon" class="bi bi-moon-stars"></i>
+                            <span id="themeToggleText">Dark Mode</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-center py-5 d-flex align-items-center position-relative overflow-hidden">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+        <div class="container position-relative z-index-1">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <h1 class="display-3 fw-bold mb-4 tracking-tight hero-title gradient-text">
+                        Log File Anomaly Explainer
+                    </h1>
+                    <p class="lead text-muted mb-5 px-lg-5 fs-4">
+                        Upload raw system, application, or database log files. Our rule-based engine finds anomalies instantly, and AI translates errors into simple human-readable solutions.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                        <a href="{{ url_for('upload') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg d-flex align-items-center justify-content-center gap-2">
+                            Get Started Analysing <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a href="#features" class="btn btn-outline-secondary btn-lg rounded-pill px-4 py-3">
+                            Explore Features
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Preview Cards / Highlights -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold fs-1">Core Capabilities</h2>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <!-- Card 1 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 feature-card p-4 border-0">
+                        <div class="card-icon bg-primary-soft text-primary-glow mb-4">
+                            <i class="bi bi-file-earmark-arrow-up"></i>
+                        </div>
+                        <h3 class="fw-bold h4 mb-3">Multi-Format Parsing</h3>
+                        <p class="text-muted mb-0">
+                            Recognizes standard log levels (INFO, WARNING, ERROR, CRITICAL) and parses complex timestamps automatically using flexible regular expressions and Pandas.
+                        </p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 feature-card p-4 border-0">
+                        <div class="card-icon bg-success-soft text-success mb-4">
+                            <i class="bi bi-magic"></i>
+                        </div>
+                        <h3 class="fw-bold h4 mb-3">AI Diagnostics (GPT)</h3>
+                        <p class="text-muted mb-0">
+                            Integrates with OpenAI API (GPT-3.5) to automatically diagnose error root causes, estimate severity impact, and suggest actionable fixing scripts/remedies.
+                        </p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 feature-card p-4 border-0">
+                        <div class="card-icon bg-danger-soft text-danger mb-4">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <h3 class="fw-bold h4 mb-3">Interactive Dashboards</h3>
+                        <p class="text-muted mb-0">
+                            Explore charts tracking errors, volume spikes, and levels. Dive deep into a fully searchable, paginated log viewer table capable of processing thousands of lines.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Reports History Section -->
+    {% if history %}
+    <section id="history" class="py-5 border-top border-secondary border-opacity-10">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold fs-1">Recent Analyses</h2>
+                <p class="text-muted">Quickly access recently processed log diagnostics and reports</p>
+            </div>
+            
+            <!-- Flash Messages inside index -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="card glass-card border-0 p-4">
+                <div class="table-responsive rounded-3">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-theme-header">
+                            <tr>
+                                <th>File Name</th>
+                                <th>Upload Date</th>
+                                <th>Total Logs</th>
+                                <th>Anomalies</th>
+                                <th>Max Severity</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in history %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-file-earmark-code text-primary fs-5"></i>
+                                        <span class="fw-bold">{{ report.filename }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="text-muted small">{{ report.timestamp }}</span></td>
+                                <td><span class="badge bg-secondary">{{ report.total_logs }} lines</span></td>
+                                <td><span class="badge bg-violet-soft text-violet">{{ report.anomalies_count }} found</span></td>
+                                <td>
+                                    <span class="badge 
+                                        {% if report.max_severity == 'Low' %}bg-success-soft text-success
+                                        {% elif report.max_severity == 'Medium' %}bg-warning-soft text-warning
+                                        {% elif report.max_severity == 'High' %}bg-danger-soft text-danger
+                                        {% else %}bg-critical-soft text-critical
+                                        {% endif %}">
+                                        {{ report.max_severity }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex align-items-center justify-content-end gap-2">
+                                        <a href="{{ url_for('results', result_id=report.result_id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                        <form action="{{ url_for('delete_history', result_id=report.result_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    
+    <!-- Theme Switcher Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const themeToggleIcon = document.getElementById('themeToggleIcon');
+            const themeToggleText = document.getElementById('themeToggleText');
+            
+            // Check for saved theme preference, default to dark for rich aesthetics
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
+            
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeButton(newTheme);
+            });
+            
+            function updateThemeButton(theme) {
+                const nav = document.querySelector('nav.navbar');
+                if (theme === 'dark') {
+                    themeToggleIcon.className = 'bi bi-sun-fill text-warning';
+                    themeToggleText.textContent = 'Light Mode';
+                    themeToggleBtn.className = 'btn btn-outline-warning rounded-pill px-3 py-1-5 d-flex align-items-center gap-2';
+                    if (nav) {
+                        nav.classList.remove('navbar-light');
+                        nav.classList.add('navbar-dark');
+                    }
+                } else {
+                    themeToggleIcon.className = 'bi bi-moon-stars-fill text-primary';
+                    themeToggleText.textContent = 'Dark Mode';
+                    themeToggleBtn.className = 'btn btn-outline-primary rounded-pill px-3 py-1-5 d-flex align-items-center gap-2';
+                    if (nav) {
+                        nav.classList.remove('navbar-dark');
+                        nav.classList.add('navbar-light');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

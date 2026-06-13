@@ -1,0 +1,16 @@
+2026-06-12 19:30:10 INFO Connection established successfully on port 8080
+2026-06-12 19:30:12 WARNING Database connection timeout, retrying connection...
+2026-06-12 19:30:13 ERROR Failed to connect to MySQL database at 10.0.0.5 after 3 attempts
+2026-06-12 19:30:15 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:16 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:17 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:18 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:19 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:20 INFO User registration request received for email: tester@domain.com
+2026-06-12 19:30:22 ERROR Write timed out waiting for replica sync
+2026-06-12 19:30:22 ERROR Write timed out waiting for replica sync
+2026-06-12 19:30:22 ERROR Write timed out waiting for replica sync
+2026-06-12 19:30:24 FATAL java.lang.OutOfMemoryError: Java heap space
+2226-06-12 19:30:25 INFO Server execution resumed
+Malformed log line that does not contain any timestamp but has an ERROR message
+2026-06-12 19:30:30 INFO Server shutdown sequence finished clean

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Log File - LogSentry AI</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts (Outfit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+                <div class="brand-logo-icon">
+                    <i class="bi bi-shield-fill-exclamation text-primary-glow"></i>
+                </div>
+                <span class="fw-bold tracking-tight">LogSentry AI</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('upload') }}">Upload Analyzer</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="themeToggle" class="btn btn-outline-light rounded-pill px-3 py-1-5 d-flex align-items-center gap-2">
+                            <i id="themeToggleIcon" class="bi bi-moon-stars"></i>
+                            <span id="themeToggleText">Dark Mode</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Page Header -->
+                <div class="text-center mb-5">
+                    <h1 class="fw-bold h2">Upload Log File</h1>
+                    <p class="text-muted">Analyze your system logs for errors, failures, and security concerns</p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Main Upload Card -->
+                <div class="card glass-card border-0 p-4 p-md-5 position-relative overflow-hidden mb-4">
+                    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        
+                        <!-- Drag & Drop Zone -->
+                        <div class="upload-dropzone text-center p-5 rounded-4 mb-4 position-relative" id="dropzone">
+                            <input type="file" name="file" id="fileInput" class="d-none" accept=".log,.txt" required>
+                            <div class="dropzone-content">
+                                <div class="dropzone-icon mb-3">
+                                    <i class="bi bi-cloud-arrow-up text-primary-glow fs-1"></i>
+                                </div>
+                                <h3 class="h5 fw-bold mb-2">Drag and drop log file here</h3>
+                                <p class="text-muted small mb-3">Supports .log and .txt files (Max size: 16MB)</p>
+                                <button type="button" class="btn btn-outline-primary rounded-pill px-4" id="browseBtn">
+                                    Browse Files
+                                </button>
+                            </div>
+                            <!-- Selected File Banner -->
+                            <div class="file-info-banner d-none" id="fileInfoBanner">
+                                <i class="bi bi-file-earmark-code text-primary fs-2 mb-2 d-block"></i>
+                                <span class="fw-bold d-block text-truncate" id="selectedFileName">filename.log</span>
+                                <span class="text-muted small d-block mb-3" id="selectedFileSize">0 KB</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" id="removeFileBtn">
+                                    Remove File
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- API Key Input Section (Optional) -->
+                        <div class="mb-4">
+                            <label for="apiKeyInput" class="form-label fw-semibold d-flex justify-content-between align-items-center">
+                                <span>OpenAI API Key <span class="text-muted fw-normal">(Optional)</span></span>
+                                <a href="#" class="text-decoration-none small text-primary" data-bs-toggle="collapse" data-bs-target="#apiKeyHelp">
+                                    What is this?
+                                </a>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="bi bi-key text-muted"></i>
+                                </span>
+                                <input type="password" name="api_key" id="apiKeyInput" class="form-control border-start-0" placeholder="sk-...">
+                            </div>
+                            <div id="apiKeyHelp" class="collapse mt-2">
+                                <div class="card card-body bg-light border-0 small text-muted p-3">
+                                    <p class="mb-2"><strong>Why configure an API key?</strong> We send any detected anomalies to OpenAI GPT-3.5 to explain root causes and recommend exact code fixes.</p>
+                                    <p class="mb-0"><strong>Don't have a key?</strong> No worries! Leave it blank, and the app will automatically use pre-configured local rule templates to explain standard issues.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill py-3 d-flex align-items-center justify-content-center gap-2 shadow-lg" id="submitBtn">
+                            <i class="bi bi-cpu"></i> Analyze Log File
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Guidance / Sample logs card -->
+                <div class="card glass-card border-0 p-4">
+                    <h4 class="fw-bold h5 mb-3"><i class="bi bi-lightbulb text-warning me-2"></i>Testing Tips</h4>
+                    <p class="text-muted small">
+                        To test anomaly detection, you can write or find a log file containing lines like:
+                    </p>
+                    <pre class="box-accent-theme p-3 rounded-3 text-start small mb-0"><code>2026-06-12 19:30:10 INFO Connection established successfully
+2026-06-12 19:30:12 WARNING Database connection timeout, retrying...
+2026-06-12 19:30:13 ERROR Failed to connect to MySQL database at 10.0.0.5
+2026-06-12 19:30:15 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:16 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:17 WARNING failed login for user 'admin' from IP 192.168.1.1
+2026-06-12 19:30:19 FATAL java.lang.OutOfMemoryError: Java heap space</code></pre>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay d-none">
+        <div class="loading-content text-center text-white">
+            <div class="spinner-border text-primary-glow mb-4" style="width: 4rem; height: 4rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h2 class="fw-bold mb-2" id="loadingTitle">Analyzing Log File</h2>
+            <p class="text-white-50 px-4" id="loadingSubtitle">Running regex parser and applying anomaly detection rules...</p>
+            <div class="progress mt-3 mx-auto" style="width: 250px; height: 6px;">
+                <div id="loadingProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 10%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    
+    <!-- Theme & Drag Drop Handling Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Switcher
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const themeToggleIcon = document.getElementById('themeToggleIcon');
+            const themeToggleText = document.getElementById('themeToggleText');
+            
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
+            
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeButton(newTheme);
+            });
+            
+            function updateThemeButton(theme) {
+                const nav = document.querySelector('nav.navbar');
+                if (theme === 'dark') {
+                    themeToggleIcon.className = 'bi bi-sun-fill text-warning';
+                    themeToggleText.textContent = 'Light Mode';
+                    themeToggleBtn.className = 'btn btn-outline-warning rounded-pill px-3 py-1-5 d-flex align-items-center gap-2';
+                    if (nav) {
+                        nav.classList.remove('navbar-light');
+                        nav.classList.add('navbar-dark');
+                    }
+                } else {
+                    themeToggleIcon.className = 'bi bi-moon-stars-fill text-primary';
+                    themeToggleText.textContent = 'Dark Mode';
+                    themeToggleBtn.className = 'btn btn-outline-primary rounded-pill px-3 py-1-5 d-flex align-items-center gap-2';
+                    if (nav) {
+                        nav.classList.remove('navbar-dark');
+                        nav.classList.add('navbar-light');
+                    }
+                }
+            }
+
+            // Drag & Drop / File Input
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const dropzoneContent = document.querySelector('.dropzone-content');
+            const fileInfoBanner = document.getElementById('fileInfoBanner');
+            const selectedFileName = document.getElementById('selectedFileName');
+            const selectedFileSize = document.getElementById('selectedFileSize');
+            const removeFileBtn = document.getElementById('removeFileBtn');
+            const uploadForm = document.getElementById('uploadForm');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingProgress = document.getElementById('loadingProgress');
+            const loadingTitle = document.getElementById('loadingTitle');
+            const loadingSubtitle = document.getElementById('loadingSubtitle');
+
+            // Click to browse
+            browseBtn.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('click', (e) => {
+                if (e.target === dropzone || dropzone.contains(e.target) && e.target !== browseBtn && e.target !== removeFileBtn && !removeFileBtn.contains(e.target)) {
+                    if (fileInput.files.length === 0) {
+                        fileInput.click();
+                    }
+                }
+            });
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Highlight dropzone on drag over
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => {
+                    dropzone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => {
+                    dropzone.classList.remove('dragover');
+                }, false);
+            });
+
+            // Handle dropped files
+            dropzone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateFileInfo();
+                }
+            });
+
+            // Handle file selected via input
+            fileInput.addEventListener('change', updateFileInfo);
+
+            function updateFileInfo() {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    selectedFileName.textContent = file.name;
+                    // Format size
+                    let sizeStr = "";
+                    if (file.size < 1024) sizeStr = file.size + " Bytes";
+                    else if (file.size < 1048576) sizeStr = (file.size / 1024).toFixed(1) + " KB";
+                    else sizeStr = (file.size / 1048576).toFixed(1) + " MB";
+                    selectedFileSize.textContent = sizeStr;
+
+                    dropzoneContent.classList.add('d-none');
+                    fileInfoBanner.classList.remove('d-none');
+                    dropzone.classList.add('has-file');
+                }
+            }
+
+            // Remove file
+            removeFileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                fileInput.value = '';
+                dropzoneContent.classList.remove('d-none');
+                fileInfoBanner.classList.add('d-none');
+                dropzone.classList.remove('has-file');
+            });
+
+            // Form Submit / Loading indicators
+            uploadForm.addEventListener('submit', () => {
+                // Save API key in sessionStorage to persist it for the chatbot session
+                const apiKey = document.getElementById('apiKeyInput').value;
+                if (apiKey) {
+                    sessionStorage.setItem('openai_api_key', apiKey);
+                }
+                loadingOverlay.classList.remove('d-none');
+                
+                // Simulate progressive loading text
+                let progress = 10;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    if (progress <= 90) {
+                        loadingProgress.style.width = progress + '%';
+                        if (progress === 30) {
+                            loadingTitle.textContent = "Scanning Anomalies";
+                            loadingSubtitle.textContent = "Matching rules for repeated failures and suspicious log rates...";
+                        } else if (progress === 60) {
+                            loadingTitle.textContent = "Running AI Explanation";
+                            loadingSubtitle.textContent = "Translating identified anomalies using LLM models...";
+                        } else if (progress === 80) {
+                            loadingTitle.textContent = "Synthesizing Dashboard";
+                            loadingSubtitle.textContent = "Preparing data charts and tables...";
+                        }
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>
