@@ -1,0 +1,8 @@
+2025-06-01 10:00:01 INFO Application started
+2025-06-01 10:01:12 INFO User login successful
+2025-06-01 10:02:45 WARNING Memory usage exceeded 80%
+2025-06-01 10:03:12 ERROR Database connection failed
+2025-06-01 10:03:30 INFO Retrying database connection
+2025-06-01 10:04:01 INFO Database connection restored
+2025-06-01 10:05:15 WARNING High CPU utilization detected
+2025-06-01 10:06:20 INFO System stabilized
