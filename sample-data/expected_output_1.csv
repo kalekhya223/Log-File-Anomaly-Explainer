@@ -1,0 +1,9 @@
+line_number,level,message
+1,INFO,Application started
+2,INFO,User login successful
+3,WARNING,Memory usage exceeded 80%
+4,ERROR,Database connection failed
+5,INFO,Retrying database connection
+6,INFO,Database connection restored
+7,WARNING,High CPU utilization detected
+8,INFO,System stabilized
