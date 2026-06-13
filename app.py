@@ -57,7 +57,7 @@ def compute_charts_data(df, anomalies):
     
     if has_timestamps:
         # Fill missing values and sort
-        time_series['timestamp'] = time_series['timestamp'].fillna(method='ffill').fillna(method='bfill')
+        time_series['timestamp'] = time_series['timestamp'].ffill().bfill()
         
         # Try to parse and extract a readable string for plotting
         # To avoid datetime parsing bottlenecks, we can truncate the timestamp string:
