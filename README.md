@@ -1,5 +1,17 @@
 # LogSentry AI - Log File Anomaly Explainer
 
+### Team 02 |UC ID: PS-02 |Production Support Category
+
+## Team Members
+
+| Name | Roll No | Branch |
+|-------|--------|--------|
+| Kattamuri Alekhya | 23U41A0523 | CSE |
+| Velaga Mounika | 23U41A0558| CSE |
+| Udi Vishnu Vardhini | 24U45A4409 | CSD |
+| Ganisetti Venuka | 23U41A0420 | ECE |
+
+
 ## Overview
 
 LogSentry AI is an AI-powered log analysis platform that automatically parses application logs, detects anomalies, identifies security threats and system failures, and provides intelligent explanations to help developers troubleshoot issues faster.
@@ -232,12 +244,6 @@ pytest tests/
 * Large log files may increase processing time.
 
 ---
-##Team Members
--Kattamuri Alekhya
--Velaga Mounika
--Udi Vishnu Vardhini
--Ganisetti Venuka
-
 ## Project Links
 
 ### GitHub Repository
